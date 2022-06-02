@@ -1,0 +1,22 @@
+{
+    "extends": "../js-beam-vite/dist/tsconfig.json",
+    "compilerOptions": {
+        "outDir": "dist",
+        "rootDir": "src",
+        "noEmit": false,
+        "module": "esnext",
+        "target": "ES2021",
+        "declaration": true,
+        "declarationDir": "dist",
+        "declarationMap": true,
+    },
+    "include": [
+        "./**/*.ts",
+        "./**/*.tsx"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist",
+        "vite.config.ts"
+    ]
+}
