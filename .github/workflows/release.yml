@@ -4,11 +4,9 @@ on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
 
 jobs:
   build:
-    if: (github.repository == 'lifespikes/pdf-mutator' || github.repository == 'lifespikes/nacha-file')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -26,25 +24,30 @@ jobs:
         with:
           name: build-artifact
           path: dist/
+
   release:
     needs: [build]
     runs-on: ubuntu-latest
-    permissions: write-all
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@master
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+
+  publish:
+    needs: [build]
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
       - uses: actions/download-artifact@v3
         with:
           name: build-artifact
-      - uses: "marvinpinto/action-automatic-releases@latest"
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
-          automatic_release_tag: true
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v2
         with:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@lifespikes'
       - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
