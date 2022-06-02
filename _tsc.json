@@ -24,9 +24,6 @@
     "typeRoots": [
       "node_modules/@types"
     ],
-    "types": [
-      "vite/client"
-    ],
     "baseUrl": ".",
     "sourceMap": true
   }
