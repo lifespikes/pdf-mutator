@@ -1,9 +1,14 @@
 {
     "name": "pdf-mutator",
-    "version": "v0.7.98",
+    "version": "v0.8.0",
     "private": true,
     "main": "dist/index.js",
     "bin": "dist/index.js",
+    "files": [
+        "dist",
+        "package.json",
+        "README.md"
+    ],
     "scripts": {
         "build": "tsc"
     },
