@@ -41,6 +41,7 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
+          automatic_release_tag: true
       - uses: actions/setup-node@v3
         with:
           node-version: '16.x'
