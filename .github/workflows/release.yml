@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -28,12 +29,9 @@ jobs:
   release:
     needs: [build]
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-      packages: write
-      checks: write
-      statuses: write
+    permissions: write-all
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@master
       - uses: actions/download-artifact@v3
@@ -49,5 +47,3 @@ jobs:
           registry-url: 'https://npm.pkg.github.com'
           scope: '@lifespikes'
       - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
