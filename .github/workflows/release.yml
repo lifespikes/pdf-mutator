@@ -6,8 +6,11 @@ on:
       - 'v*'
   workflow_dispatch:
 
+env:
+  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
-  build:
+  build-npm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
@@ -16,17 +19,15 @@ jobs:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@lifespikes'
+          always-auth: true
       - name: Run build
         run: |
           yarn install
           yarn build
-          rm -rf node_modules
-      - uses: actions/upload-artifact@v3
-        with:
-          name: build-artifact
-          path: dist/
+      - name: Publish
+        run: npm publish
 
-  release:
+  gh-release:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
@@ -35,20 +36,3 @@ jobs:
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-
-  publish:
-    needs: [build]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@master
-      - uses: actions/download-artifact@v3
-        with:
-          name: build-artifact
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16.x'
-          registry-url: 'https://npm.pkg.github.com'
-          scope: '@lifespikes'
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
