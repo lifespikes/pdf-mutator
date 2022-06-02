@@ -6,25 +6,16 @@ on:
       - 'v*'
   workflow_dispatch:
 
-env:
-  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 jobs:
   build-npm:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v2
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
           scope: '@lifespikes'
-          always-auth: true
       - name: Run build
         run: |
           yarn install

@@ -1,9 +1,9 @@
 {
-    "name": "pdf-mutator",
-    "version": "v0.8.4",
-    "private": true,
-    "main": "dist/index.js",
+    "name": "@lifespikes/pdf-mutator",
+    "version": "v0.8.5",
+    "description": "PRG PDF Mutator",
     "bin": "dist/index.js",
+    "types": "dist/index.d.ts",
     "files": [
         "dist",
         "package.json",
@@ -22,5 +22,8 @@
     "devDependencies": {
         "@types/node": "^17.0.36",
         "typescript": "^4.6.2"
+    },
+    "repository": {
+        "url": "https://github.com/lifespikes/pdf-mutator"
     }
 }
