@@ -12,9 +12,14 @@ env:
 jobs:
   build-npm:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - uses: actions/checkout@master
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v2
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           node-version: '16.x'
           registry-url: 'https://npm.pkg.github.com'
@@ -24,8 +29,9 @@ jobs:
         run: |
           yarn install
           yarn build
-      - name: Publish
-        run: npm publish
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   gh-release:
     needs: [build-npm]
