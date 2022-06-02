@@ -1,6 +1,6 @@
 {
     "name": "pdf-mutator",
-    "version": "v0.7.83",
+    "version": "v0.7.84",
     "private": true,
     "main": "dist/index.js",
     "bin": "dist/index.js",
