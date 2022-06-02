@@ -1,9 +1,12 @@
 {
     "name": "pdf-mutator",
-    "version": "v0.7.88",
+    "version": "v0.7.90",
     "private": true,
     "main": "dist/index.js",
     "bin": "dist/index.js",
+    "scripts": {
+        "build": "tsc"
+    },
     "dependencies": {
         "jimp": "^0.16.1",
         "node-html-to-image": "^3.2.4",
