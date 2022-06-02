@@ -28,7 +28,7 @@ jobs:
         run: npm publish
 
   gh-release:
-    needs: [build]
+    needs: [build-npm]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
