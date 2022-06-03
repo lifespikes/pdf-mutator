@@ -1,8 +1,4 @@
-/**
- * Main entry point when using as an executable/CLI application.
- *
- * Primarily used for Vapor deployments where vendor libraries are not available.
- */
+#!/usr/bin/env node
 
 import * as process from "process";
 import scripts from "./modules";
