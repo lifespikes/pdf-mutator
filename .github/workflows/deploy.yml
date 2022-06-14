@@ -1,0 +1,38 @@
+name: Lambda Build
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials from Test account
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::714943446733:role/github-actions
+          aws-region: us-east-1
+
+      - name: Setup Docker BuildX
+        uses: docker/setup-buildx-action@v2
+        id: buildx
+        with:
+          install: true
+
+      - name: Run build script
+        run: sh .github/build/run-container.sh
+
+      - name: Deploy to Lambda
+        run: |
+          aws s3 cp .github/build/pdf-mutator.zip s3://builds-and-artifacts/pdf-mutator-build.zip
+          aws lambda update-function-code --function-name pdf-mutator --s3-bucket builds-and-artifacts --s3-key pdf-mutator-build.zip
+          aws lambda publish-version --function-name pdf-mutator

@@ -1,21 +1,18 @@
 {
-    "extends": "./_tsc.json",
     "compilerOptions": {
-        "outDir": "dist",
-        "rootDir": "src",
-        "noEmit": false,
-        "module": "commonjs",
-        "target": "ES2021",
-        "declaration": true,
-        "declarationDir": "dist",
-        "declarationMap": true,
+        "target": "es2020",
+        "strict": true,
+        "preserveConstEnums": true,
+        "sourceMap": false,
+        "module":"commonjs",
+        "moduleResolution":"node",
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "isolatedModules": true,
+        "outDir": "./dist",
     },
     "include": [
-        "./**/*.ts",
-        "./**/*.tsx"
+        "./src/**/*.ts",
     ],
-    "exclude": [
-        "node_modules",
-        "dist"
-    ]
 }

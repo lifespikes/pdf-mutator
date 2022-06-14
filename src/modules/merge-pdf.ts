@@ -6,22 +6,20 @@
  * Private license: Not to be distributed, modified, or otherwise shared without prior authorization from LifeSpikes, or by its contractually-bound customer upon delivery or release of IP.
  */
 
-import getStdin from "../lib/get-stdin";
-import { pdfFromPath } from "../lib/pdf-modifiers";
+import { pdfFromS3ARN } from "../lib/pdf-modifiers";
 import { PDFDocument } from "pdf-lib";
-import * as fs from "node:fs/promises";
+import { uploadNew } from "../lib/s3";
 
 interface MergePdfPayload {
-  output: string;
   files: string[];
 }
 
-export default () =>
+export default (body: string) =>
   (async () => {
-    const { output, files }: MergePdfPayload = JSON.parse(await getStdin());
+    const { files }: MergePdfPayload = JSON.parse(body);
 
     const documents = await Promise.all(
-      files.map(async (path) => await pdfFromPath(path))
+      files.map(async (arn) => await pdfFromS3ARN(arn))
     );
 
     const newPdf = await PDFDocument.create();
@@ -34,7 +32,5 @@ export default () =>
       }
     }
 
-    await fs.writeFile(output, await newPdf.save());
-
-    console.log(JSON.stringify({ status: "OK" }));
+    return await uploadNew(await newPdf.save(), ".png");
   })();

@@ -19,7 +19,6 @@ export interface CsaRenderPayload {
 
   signature_path: string;
   source_path: string;
-  output_path: string;
 }
 
 export interface DrawOptions {

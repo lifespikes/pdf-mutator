@@ -2,3 +2,9 @@ node_modules
 dist
 tsconfig.tsbuildinfo
 .rollup.cache
+/nexe-build/
+archive.zip
+pdf-mutator-*.zip
+yarn.lock
+.yarn
+dcid

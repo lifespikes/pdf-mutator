@@ -6,18 +6,18 @@
  * Private license: Not to be distributed, modified, or otherwise shared without prior authorization from LifeSpikes, or by its contractually-bound customer upon delivery or release of IP.
  */
 
-import {open, writeFile} from 'node:fs/promises';
-import {PDFDocument, rgb, StandardFonts} from 'pdf-lib';
-import {WriteImageOptions, WriteTextOptions} from './pdf-editor.types';
-import Jimp from 'jimp';
+import { open, writeFile } from "node:fs/promises";
+import { PDFDocument, rgb, StandardFonts } from "pdf-lib";
+import { get } from "./s3";
+import { WriteImageOptions, WriteTextOptions } from "./pdf-editor.types";
+import imageSize from "buffer-image-size";
 
-export const pdfFromPath = async (path: string) => {
-  const bytes = await (await open(path, 'r')).readFile();
-  return await PDFDocument.load(bytes);
+export const pdfFromS3ARN = async (arn: string) => {
+  return await PDFDocument.load(await get(arn));
 };
 
-export const getBlankAgreement = async (path: string) => {
-  const doc = await pdfFromPath(path);
+export const getBlankAgreement = async (arn: string) => {
+  const doc = await pdfFromS3ARN(arn);
 
   return {
     text: async (options: WriteTextOptions) => await writeText(doc, options),
@@ -29,9 +29,9 @@ export const getBlankAgreement = async (path: string) => {
 
 export const writeImage = async (
   document: PDFDocument,
-  {x, y, path, width, height, ...options}: WriteImageOptions,
+  { x, y, path, width, height, ...options }: WriteImageOptions
 ) => {
-  const bytes = await (await open(path, 'r')).readFile();
+  const bytes = await (await open(path, "r")).readFile();
   const image = await document.embedPng(bytes);
   const page = document.getPages()[options.page];
 
@@ -39,7 +39,7 @@ export const writeImage = async (
 
   const imageWidth = async () => {
     if (height && !width) {
-      const {bitmap} = await Jimp.read(bytes);
+      const bitmap = imageSize(bytes);
       return (
         bitmap.width - bitmap.width * ((bitmap.height - height) / bitmap.height)
       );
@@ -58,7 +58,7 @@ export const writeImage = async (
 
 export const writeText = async (
   document: PDFDocument,
-  {x, y, text, ...options}: WriteTextOptions,
+  { x, y, text, ...options }: WriteTextOptions
 ) => {
   const helvetica = await document.embedFont(StandardFonts.TimesRoman);
   const page = document.getPages()[options.page];

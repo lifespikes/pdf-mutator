@@ -7,13 +7,13 @@
  */
 
 import { getBlankAgreement } from "../lib/pdf-modifiers";
-import getStdin from "../lib/get-stdin";
 import { CsaRenderPayload } from "../lib/pdf-editor.types";
 import fields from "../lib/fields";
+import { uploadNew } from "../lib/s3";
 
-export default () =>
+export default (body: string) =>
   (async () => {
-    const payload: CsaRenderPayload = JSON.parse(await getStdin()) as Record<
+    const payload: CsaRenderPayload = JSON.parse(body) as Record<
       keyof CsaRenderPayload,
       string
     >;
@@ -61,8 +61,5 @@ export default () =>
       });
     }
 
-    /* Save file */
-    await doc.save(payload.output_path);
-
-    console.log(JSON.stringify({ status: "OK" }));
+    return await uploadNew(await doc.buffer(), ".pdf");
   })();

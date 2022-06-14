@@ -1,16 +1,26 @@
-#!/usr/bin/env node
-
-import * as process from "process";
 import scripts from "./modules";
 
-const [script] = process.argv.slice(2);
+type LambdaEvent = {
+  body: string;
+  rawPath: string;
+  requestContext: {
+    http: {
+      method: "POST" | "GET" | "PUT" | "DELETE" | "HEAD" | "PATCH";
+    };
+  };
+};
 
-if (
-  script === "generateCsa" ||
-  script === "htmlToPng" ||
-  script === "mergePdf"
-) {
-  scripts[script]();
-} else {
-  throw new Error(`Unknown module "${script}".`);
-}
+exports.handler = async (event: LambdaEvent) => {
+  const script: string = event.rawPath.substring(1);
+
+  if (
+    script &&
+    (script === "htmlToPng" ||
+      script === "mergePdf" ||
+      script === "generateCsa" ||
+      script === "listFiles") &&
+    event.requestContext.http.method === "POST"
+  ) {
+    return scripts[script](event.body);
+  }
+};
