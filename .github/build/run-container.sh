@@ -10,7 +10,7 @@ fi
 
 BUILD_DIR=$(dirname "$(readlink -f "$0")")
 
-docker build -f "$BUILD_DIR/Dockerfile" -t pdf-mutator:latest .
+docker build -f "$BUILD_DIR/Dockerfile" --load -t pdf-mutator:latest .
 docker run --cidfile dcid pdf-mutator:latest
 
 CONTAINER_ID=$(cat dcid)
