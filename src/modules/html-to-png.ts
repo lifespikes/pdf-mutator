@@ -27,19 +27,10 @@ export default (body: string) =>
 
     const img = await nodeHtmlToImage({
       transparent: true,
+      type: "jpeg",
       content,
       selector: "#container",
       html: fs.readFileSync(__dirname + "/../assets/signature.html", "utf8"),
-      puppeteerArgs: {
-        args: chromium.args,
-        defaultViewport: {
-          width: 1920,
-          height: 1080,
-          deviceScaleFactor: 3,
-        },
-        executablePath: await chromium.executablePath,
-        headless: true,
-      },
     });
 
     return await uploadNew(content.bucket, img, ".png");

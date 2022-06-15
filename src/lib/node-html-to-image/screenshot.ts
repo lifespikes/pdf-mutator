@@ -4,25 +4,20 @@ import { MakeScreenshotParams } from "./types";
 
 export async function makeScreenshot(
   page: Page,
-  {
-    screenshot,
-    beforeScreenshot,
-    waitUntil = "networkidle0",
-  }: MakeScreenshotParams
+  { screenshot }: MakeScreenshotParams
 ) {
   if (screenshot?.content) {
     const template = compile(screenshot.html);
     screenshot.setHTML(template(screenshot.content));
   }
 
-  await page.setContent(screenshot.html, { waitUntil });
+  await page.setContent(screenshot.html);
+  await page.waitForSelector(screenshot.selector);
+
   const element = await page.$(screenshot.selector);
+
   if (!element) {
     throw Error("No element matches selector: " + screenshot.selector);
-  }
-
-  if (isFunction(beforeScreenshot) && beforeScreenshot) {
-    await beforeScreenshot(page);
   }
 
   const buffer = await element.screenshot({

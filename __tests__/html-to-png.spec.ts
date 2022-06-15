@@ -11,6 +11,21 @@ test("s3 can get a file", async () => {
   expect(file).toBeInstanceOf(ArrayBuffer);
 });
 
+test("headless chrome boots and generates signature", async () => {
+  const signature = await htmlToPng(
+    JSON.stringify({
+      fingerprint: "abc123",
+      content: "Test",
+      timestamp: "10000",
+      bucket: "prg-common",
+    })
+  );
+
+  console.log(signature);
+
+  expect(signature).toHaveProperty("output");
+});
+
 test("function generates blank csa", async () => {
   const signature = await htmlToPng(
     JSON.stringify({
