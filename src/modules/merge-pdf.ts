@@ -6,7 +6,7 @@
  * Private license: Not to be distributed, modified, or otherwise shared without prior authorization from LifeSpikes, or by its contractually-bound customer upon delivery or release of IP.
  */
 
-import { pdfFromS3ARN } from "../lib/pdf-modifiers";
+import { pdfFromS3URL } from "../lib/pdf-modifiers";
 import { PDFDocument } from "pdf-lib";
 import { uploadNew } from "../lib/s3";
 
@@ -19,7 +19,7 @@ export default (body: string) =>
     const { files }: MergePdfPayload = JSON.parse(body);
 
     const documents = await Promise.all(
-      files.map(async (arn) => await pdfFromS3ARN(arn))
+      files.reverse().map(async (uri) => await pdfFromS3URL(uri))
     );
 
     const newPdf = await PDFDocument.create();

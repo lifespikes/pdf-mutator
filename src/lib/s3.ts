@@ -7,8 +7,6 @@ import {
   PutObjectCommandOutput,
   S3Client,
 } from "@aws-sdk/client-s3";
-import { ReadableStream } from "stream/web";
-import { Blob } from "buffer";
 import { Readable } from "stream";
 
 export type Uploadable = Buffer | Uint8Array;
@@ -53,9 +51,8 @@ const streamToString = (stream: Readable): Promise<ArrayBuffer> =>
     stream.on("end", () => resolve(Buffer.concat(chunks).buffer));
   });
 
-export async function get(arn: string): Promise<ArrayBuffer> {
-  const [, path] = arn.split(":::");
-  const [[, Bucket, Key]] = [...path.matchAll(/([-A-z0-9.]+)\/(.*)/g)];
+export async function get(uri: string): Promise<ArrayBuffer> {
+  const [[, Bucket, Key]] = [...uri.matchAll(/^s3:\/\/([-A-z0-9]+)\/(.*)$/g)];
 
   const { Body } = await client.send<
     GetObjectCommandInput,

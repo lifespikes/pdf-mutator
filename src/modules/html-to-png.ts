@@ -7,7 +7,7 @@
  */
 
 import nodeHtmlToImage from "../lib/node-html-to-image";
-import * as fs from "fs";
+import * as fs from "fs"; // ONLY FOR HTML FILE RETRIEVAL!
 import chromium from "@sparticuz/chrome-aws-lambda";
 import { uploadNew } from "../lib/s3";
 

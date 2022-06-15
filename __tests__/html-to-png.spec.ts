@@ -1,53 +1,51 @@
 import * as s3 from "../src/lib/s3";
 import htmlToPng from "../src/modules/html-to-png";
-import { request } from "https";
+import generateCsa from "../src/modules/generate-csa";
+import mergePdf from "../src/modules/merge-pdf";
 
 jest.mock("../src/lib/get-stdin");
 jest.setTimeout(30000);
 
-test("htmlToPng generates an image", async () => {
-  const testPayload = {
-    fingerprint: "abc",
-    content: "John Johnson",
-    timestamp: "10000",
-  };
-
-  const result = await htmlToPng(JSON.stringify(testPayload));
-  console.log(result);
-});
-
 test("s3 can get a file", async () => {
-  const file = await s3.get(
-    "arn:aws:s3:::prg-lambda-assets/PTO REQUEST FORM - OCMI.pdf"
-  );
-
+  const file = await s3.get("s3://__test_assets__/pdf-1.pdf");
   expect(file).toBeInstanceOf(ArrayBuffer);
 });
 
-test("request to lambda function stores file", async () => {
-  await new Promise<void>((resolve) => {
-    const req = request(
-      {
-        method: "POST",
-        hostname:
-          "aydfqnreb27fnpxv4qfaaychtu0wtvel.lambda-url.us-east-1.on.aws",
-        port: 443,
-        path: "/generateCsa",
-      },
-      (res) => {
-        console.log(res);
-        resolve();
-      }
-    );
+test("function generates blank csa", async () => {
+  const signature = await htmlToPng(
+    JSON.stringify({
+      fingerprint: "abc123",
+      content: "Test",
+      timestamp: "10000",
+    })
+  );
 
-    req.write(
-      JSON.stringify({
-        fingerprint: "abc",
-        content: "John Johnson",
-        timestamp: "10000",
-      })
-    );
+  const payload = {
+    business_name: "Bobs Business",
+    full_name: "Bob Smith",
+    title: "Owner",
+    street_address: "800 Bob Lane",
+    city: "Bob City",
+    state: "State of Bob",
+    zip: "80880",
+    ssn_encrypted: "123456789",
+    license_encrypted: "123456789",
+    signature_path: signature.output,
+    source_path: "s3://prg-common/__test_assets__/csa.pdf",
+  };
 
-    req.end();
-  });
+  const output = await generateCsa(JSON.stringify(payload));
+  expect(output).toHaveProperty("output");
+});
+
+test("pdfs are merged", async () => {
+  const payload = {
+    files: [
+      "s3://prg-common/__test_assets__/pdf-1.pdf",
+      "s3://prg-common/__test_assets__/pdf-2.pdf",
+    ],
+  };
+
+  const output = await mergePdf(JSON.stringify(payload));
+  expect(output).toHaveProperty("output");
 });
