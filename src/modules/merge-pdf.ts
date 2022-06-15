@@ -12,14 +12,15 @@ import { uploadNew } from "../lib/s3";
 
 interface MergePdfPayload {
   files: string[];
+  bucket: string;
 }
 
 export default (body: string) =>
   (async () => {
-    const { files }: MergePdfPayload = JSON.parse(body);
+    const { files, bucket }: MergePdfPayload = JSON.parse(body);
 
     const documents = await Promise.all(
-      files.reverse().map(async (uri) => await pdfFromS3URL(uri))
+      files.reverse().map(async (uri) => await pdfFromS3URL(bucket, uri))
     );
 
     const newPdf = await PDFDocument.create();
@@ -32,5 +33,5 @@ export default (body: string) =>
       }
     }
 
-    return await uploadNew(await newPdf.save(), ".png");
+    return await uploadNew(bucket, await newPdf.save(), ".png");
   })();

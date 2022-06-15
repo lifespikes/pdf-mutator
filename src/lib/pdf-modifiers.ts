@@ -11,12 +11,12 @@ import * as S3 from "./s3";
 import { WriteImageOptions, WriteTextOptions } from "./pdf-editor.types";
 import imageSize from "buffer-image-size";
 
-export const pdfFromS3URL = async (uri: string) => {
-  return await PDFDocument.load(await S3.get(uri));
+export const pdfFromS3URL = async (bucket: string, uri: string) => {
+  return await PDFDocument.load(await S3.get(bucket, uri));
 };
 
-export const getBlankAgreement = async (uri: string) => {
-  const doc = await pdfFromS3URL(uri);
+export const getBlankAgreement = async (bucket: string, uri: string) => {
+  const doc = await pdfFromS3URL(bucket, uri);
 
   return {
     text: async (options: WriteTextOptions) => await writeText(doc, options),
@@ -27,10 +27,10 @@ export const getBlankAgreement = async (uri: string) => {
 
 export const writeImage = async (
   document: PDFDocument,
-  { x, y, path, width, height, ...options }: WriteImageOptions
+  { x, y, bucket, path, width, height, ...options }: WriteImageOptions
 ) => {
   // path must be a S3 URL
-  const bytes = Buffer.from(await S3.get(path));
+  const bytes = Buffer.from(await S3.get(bucket, path));
   const image = await document.embedPng(bytes);
   const page = document.getPages()[options.page];
 

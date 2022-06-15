@@ -19,7 +19,7 @@ export default (body: string) =>
     >;
 
     /* Get blank file */
-    const doc = await getBlankAgreement(payload.source_path);
+    const doc = await getBlankAgreement(payload.bucket, payload.source_path);
 
     /* Make modifications to base file */
     for (const entry of fields(payload)) {
@@ -41,6 +41,7 @@ export default (body: string) =>
           y: 40,
           height: 10,
           path: payload.signature_path,
+          bucket: payload.bucket,
           page: i,
         });
       }
@@ -50,6 +51,7 @@ export default (body: string) =>
         y: 132,
         height: 26,
         path: payload.signature_path,
+        bucket: payload.bucket,
         page: 1,
       });
       await doc.image({
@@ -57,9 +59,10 @@ export default (body: string) =>
         y: 141,
         height: 26,
         path: payload.signature_path,
+        bucket: payload.bucket,
         page: 10,
       });
     }
 
-    return await uploadNew(await doc.buffer(), ".pdf");
+    return await uploadNew(payload.bucket, await doc.buffer(), ".pdf");
   })();

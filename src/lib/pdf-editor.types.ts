@@ -19,6 +19,8 @@ export interface CsaRenderPayload {
 
   signature_path: string;
   source_path: string;
+
+  bucket: string;
 }
 
 export interface DrawOptions {
@@ -35,4 +37,5 @@ export interface WriteImageOptions extends DrawOptions {
   width?: number;
   height?: number;
   path: string;
+  bucket: string;
 }

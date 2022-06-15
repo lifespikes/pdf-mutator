@@ -7,7 +7,7 @@ jest.mock("../src/lib/get-stdin");
 jest.setTimeout(30000);
 
 test("s3 can get a file", async () => {
-  const file = await s3.get("s3://__test_assets__/pdf-1.pdf");
+  const file = await s3.get("prg-common", "__test_assets__/pdf-1.pdf");
   expect(file).toBeInstanceOf(ArrayBuffer);
 });
 
@@ -17,6 +17,7 @@ test("function generates blank csa", async () => {
       fingerprint: "abc123",
       content: "Test",
       timestamp: "10000",
+      bucket: "prg-common",
     })
   );
 
@@ -31,7 +32,8 @@ test("function generates blank csa", async () => {
     ssn_encrypted: "123456789",
     license_encrypted: "123456789",
     signature_path: signature.output,
-    source_path: "s3://prg-common/__test_assets__/csa.pdf",
+    source_path: "__test_assets__/csa.pdf",
+    bucket: "prg-common",
   };
 
   const output = await generateCsa(JSON.stringify(payload));
@@ -40,10 +42,8 @@ test("function generates blank csa", async () => {
 
 test("pdfs are merged", async () => {
   const payload = {
-    files: [
-      "s3://prg-common/__test_assets__/pdf-1.pdf",
-      "s3://prg-common/__test_assets__/pdf-2.pdf",
-    ],
+    files: ["__test_assets__/pdf-1.pdf", "__test_assets__/pdf-2.pdf"],
+    bucket: "prg-common",
   };
 
   const output = await mergePdf(JSON.stringify(payload));

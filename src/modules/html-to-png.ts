@@ -15,6 +15,7 @@ interface GeneratorPayload {
   fingerprint: string;
   content: string;
   timestamp: string;
+  bucket: string;
 }
 
 export default (body: string) =>
@@ -41,5 +42,5 @@ export default (body: string) =>
       },
     });
 
-    return await uploadNew(img, ".png");
+    return await uploadNew(content.bucket, img, ".png");
   })();

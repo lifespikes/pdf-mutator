@@ -35,5 +35,4 @@ jobs:
       - name: Deploy to Lambda
         run: |
           aws s3 cp .github/build/pdf-mutator.zip s3://builds-and-artifacts/pdf-mutator-build.zip
-          aws lambda update-function-code --function-name pdf-mutator --s3-bucket builds-and-artifacts --s3-key pdf-mutator-build.zip
-          aws lambda publish-version --function-name pdf-mutator
+          aws lambda update-function-code --function-name pdf-mutator --s3-bucket builds-and-artifacts --s3-key pdf-mutator-build.zip --publish
