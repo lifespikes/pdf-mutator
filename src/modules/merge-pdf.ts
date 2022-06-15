@@ -33,5 +33,5 @@ export default (body: string) =>
       }
     }
 
-    return await uploadNew(bucket, await newPdf.save(), ".png");
+    return await uploadNew(bucket, await newPdf.save(), ".pdf");
   })();
