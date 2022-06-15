@@ -11,7 +11,7 @@ export async function makeScreenshot(
     screenshot.setHTML(template(screenshot.content));
   }
 
-  await page.setContent(screenshot.html);
+  await page.setContent(screenshot.html, { waitUntil: "networkidle2" });
   await page.waitForSelector(screenshot.selector);
 
   const element = await page.$(screenshot.selector);
