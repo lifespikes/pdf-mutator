@@ -21,8 +21,6 @@ test("headless chrome boots and generates signature", async () => {
     })
   );
 
-  console.log(signature);
-
   expect(signature).toHaveProperty("output");
 });
 
