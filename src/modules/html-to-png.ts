@@ -7,11 +7,9 @@
  */
 
 import nodeHtmlToImage from "../lib/node-html-to-image";
-import * as fs from "fs"; // ONLY FOR HTML FILE RETRIEVAL!
-import chromium from "@sparticuz/chrome-aws-lambda";
 import { uploadNew } from "../lib/s3";
 
-interface GeneratorPayload {
+export interface GeneratorPayload {
   fingerprint: string;
   content: string;
   timestamp: string;
@@ -20,18 +18,9 @@ interface GeneratorPayload {
 
 export default (body: string) =>
   (async () => {
-    const content: GeneratorPayload = JSON.parse(body) as Record<
-      keyof GeneratorPayload,
-      string
-    >;
+    const { fingerprint, content, timestamp, bucket } = JSON.parse(body);
 
-    const img = await nodeHtmlToImage({
-      transparent: true,
-      type: "jpeg",
-      content,
-      selector: "#container",
-      html: fs.readFileSync(__dirname + "/../assets/signature.html", "utf8"),
-    });
+    const img = await nodeHtmlToImage({ fingerprint, content, timestamp });
 
-    return await uploadNew(content.bucket, img, ".png");
+    return await uploadNew(bucket, img, ".png");
   })();

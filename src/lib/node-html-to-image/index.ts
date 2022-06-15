@@ -1,68 +1,33 @@
-import { Options } from "./types";
-import { makeScreenshot } from "./screenshot";
-import { Screenshot } from "./models/Screenshot";
 import chromium from "@sparticuz/chrome-aws-lambda";
+import { readFileSync } from "fs";
 
-export default async function nodeHtmlToImage(options: Options) {
-  const {
-    html,
-    encoding,
-    transparent,
-    content,
-    output,
-    selector,
-    type,
-    quality,
-    puppeteerArgs = {},
-  } = options;
+export default async function nodeHtmlToImage(content: Record<string, string>) {
+  const selector = "#container";
+  const html = readFileSync(__dirname + "/../../assets/signature.html", "utf8");
+  const matches = [...html.matchAll(/{{([A-z]*)}}/g)];
+  const processed = matches.reduce<string>((acc, [str, key]) => {
+    return acc.replace(str, content[key]);
+  }, html);
 
   const browser = await chromium.puppeteer.launch({
-    args: [
-      ...chromium.args,
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage",
-      "--disable-accelerated-2d-canvas",
-      "--no-first-run",
-      "--no-zygote",
-      "--single-process", // <- this one doesn't works in Windows
-    ],
-    defaultViewport: {
-      width: 960,
-      height: 540,
-      deviceScaleFactor: 2,
-    },
+    args: chromium.args,
     executablePath: await chromium.executablePath,
-    headless: true,
-    ...puppeteerArgs,
+    headless: chromium.headless,
   });
 
-  try {
-    const page = await browser.newPage();
-    await page.setUserAgent(
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36"
-    );
+  const page = await browser.newPage();
+  await page.setContent(processed, { waitUntil: "networkidle2" });
+  const element = await page.$(selector);
 
-    const buffer = (
-      await makeScreenshot(page, {
-        ...options,
-        screenshot: new Screenshot({
-          html,
-          encoding,
-          transparent,
-          output,
-          content,
-          selector,
-          type,
-          quality,
-        }),
-      })
-    ).buffer;
-    await browser.close();
-
-    return buffer;
-  } catch (err) {
-    console.error(err);
-    process.exit(1);
+  if (!element) {
+    throw Error("No element matches selector: " + selector);
   }
+
+  const buffer = await element.screenshot({
+    type: "jpeg",
+  });
+
+  await browser.close();
+
+  return buffer;
 }
