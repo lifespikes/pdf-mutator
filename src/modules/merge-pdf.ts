@@ -20,7 +20,7 @@ export default (body: string) =>
     const { files, bucket }: MergePdfPayload = JSON.parse(body);
 
     const documents = await Promise.all(
-      files.reverse().map(async (uri) => await pdfFromS3URL(bucket, uri))
+      files.map(async (uri) => await pdfFromS3URL(bucket, uri))
     );
 
     const newPdf = await PDFDocument.create();
