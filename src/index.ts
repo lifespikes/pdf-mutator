@@ -1,4 +1,6 @@
 import scripts from "./modules";
+import tracer from "dd-trace";
+tracer.init();
 
 type LambdaEvent = {
   body: string;
@@ -10,7 +12,7 @@ type LambdaEvent = {
   };
 };
 
-exports.handler = async (event: LambdaEvent) => {
+exports.handler = tracer.wrap("web.request", async (event: LambdaEvent) => {
   const script: string = event.rawPath.substring(1);
 
   if (
@@ -21,6 +23,6 @@ exports.handler = async (event: LambdaEvent) => {
       script === "listFiles") &&
     event.requestContext.http.method === "POST"
   ) {
-    return scripts[script](event.body);
+    return tracer.wrap("web.request.script", scripts[script])(event.body);
   }
-};
+});
