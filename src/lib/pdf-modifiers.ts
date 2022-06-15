@@ -31,7 +31,7 @@ export const writeImage = async (
 ) => {
   // path must be a S3 URL
   const bytes = Buffer.from(await S3.get(bucket, path));
-  const image = await document.embedPng(bytes);
+  const image = await document.embedJpg(bytes);
   const page = document.getPages()[options.page];
 
   /* We do this to lock aspect ratio */
