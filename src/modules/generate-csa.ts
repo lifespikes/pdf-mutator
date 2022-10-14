@@ -6,17 +6,14 @@
  * Private license: Not to be distributed, modified, or otherwise shared without prior authorization from LifeSpikes, or by its contractually-bound customer upon delivery or release of IP.
  */
 
-import { getBlankAgreement } from "../lib/pdf-modifiers";
-import { CsaRenderPayload } from "../lib/pdf-editor.types";
+import {getBlankAgreement} from "../lib/pdf-modifiers";
+import {CsaRenderPayload} from "../lib/pdf-editor.types";
 import fields from "../lib/fields";
-import { uploadNew } from "../lib/s3";
+import {uploadNew} from "../lib/s3";
 
 export default (body: string) =>
   (async () => {
-    const payload: CsaRenderPayload = JSON.parse(body) as Record<
-      keyof CsaRenderPayload,
-      string
-    >;
+    const payload = JSON.parse(body) as CsaRenderPayload;
 
     /* Get blank file */
     const doc = await getBlankAgreement(payload.bucket, payload.source_path);

@@ -1,6 +1,6 @@
 {
     "name": "@lifespikes/pdf-mutator",
-    "version": "v0.8.27",
+    "version": "v0.8.30",
     "description": "PRG PDF Mutator",
     "bin": "dist/index.js",
     "types": "dist/index.d.ts",
@@ -13,7 +13,9 @@
     "scripts": {
         "build": "sh .github/build/run-container.sh",
         "deploy": "aws s3 cp .github/build/pdf-mutator.zip s3://builds-and-artifacts/pdf-mutator-build.zip",
-        "test": "jest"
+        "test": "jest",
+        "start": "tsc --watch",
+        "watch": "tsc && nodemon dist/helpers/server.js"
     },
     "dependencies": {
         "@aws-sdk/client-s3": "^3.109.0",
@@ -21,12 +23,14 @@
         "adm-zip": "^0.5.9",
         "buffer-image-size": "^0.6.4",
         "dayjs": "^1.11.2",
+        "express": "^4.18.1",
         "handlebars": "^4.7.7",
         "pdf-lib": "^1.17.1",
         "puppeteer-core": "^14.3.0"
     },
     "devDependencies": {
         "@types/aws-lambda": "^8.10.100",
+        "@types/express": "^4.17.13",
         "@types/jest": "^28.1.1",
         "@types/node": "^17.0.42",
         "jest": "^28.1.1",

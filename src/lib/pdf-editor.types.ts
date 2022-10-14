@@ -6,6 +6,15 @@
  * Private license: Not to be distributed, modified, or otherwise shared without prior authorization from LifeSpikes, or by its contractually-bound customer upon delivery or release of IP.
  */
 
+export type ServiceFee = {
+  home_state?: string;
+  description: string;
+  worker_comp_code: string;
+  percentage_rate: string
+};
+
+export type Entry = [number, number, string, number];
+
 export interface CsaRenderPayload {
   business_name: string;
   full_name: string;
@@ -13,6 +22,7 @@ export interface CsaRenderPayload {
   street_address: string;
   state: string;
   city: string;
+  serviceFees?: ServiceFee[];
   zip: string;
   ssn_encrypted: string;
   license_encrypted: string;
