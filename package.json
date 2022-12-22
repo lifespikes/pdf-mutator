@@ -1,6 +1,6 @@
 {
     "name": "@lifespikes/pdf-mutator",
-    "version": "v0.8.34",
+    "version": "v0.8.35",
     "description": "PRG PDF Mutator",
     "bin": "dist/index.js",
     "types": "dist/index.d.ts",
